@@ -450,7 +450,7 @@ async function refresh(){
  const [data,credentials]=await Promise.all([request("private",null,"GET"),request("passkeys",null,"GET")]);
  if(data.status!==200||credentials.status!==200){say("서버 조회 오류: HTTP "+data.status+" / "+credentials.status);return}
  $("guest").hidden=true;$("private").hidden=false;
- $("user").textContent="테스트 계정: "+user.alias+" · 계정 UUID: "+user.id+" · 임의 세션 토큰 30분 · 비밀번호 없음";
+ $("user").textContent="테스트 계정: "+user.alias+" · 계정 UUID: "+user.id+" · 방금 인증에 사용한 패스키: "+(r.json.authenticatedPasskey?.name||"확인 불가")+" · 임의 세션 토큰 30분 · 비밀번호 없음";
  const docs=$("notes");docs.replaceChildren();
  for(const item of data.json.notes||[]){
    const a=document.createElement("article"),h=document.createElement("h4"),p=document.createElement("p");
@@ -468,9 +468,37 @@ async function refresh(){
       if(response.status!==200){say("삭제 거절 HTTP "+response.status+" / "+response.json.error);return}
       await refresh();say("패스키 삭제 HTTP 200. 남은 패스키로 재로그인해 검증하십시오.");
    }));
-   a.append(h,p,del);list.append(a);
+   const test=document.createElement("button");test.type="button";test.className="secondary";
+   test.textContent="이 패스키 인증 시험";
+   test.addEventListener("click",()=>busy(()=>verifyThisPasskey(key)));
+   a.append(h,p,test,del);list.append(a);
  }
  say("서버 인증 성공: 이 계정의 비공개 메모 "+(data.json.notes||[]).length+"건과 패스키 "+(credentials.json.passkeys||[]).length+"개 조회.");
+}
+async function verifyThisPasskey(key){
+  if(!user||!window.SimpleWebAuthnBrowser){note("먼저 패스키 로그인과 브라우저 지원을 확인하세요.");return}
+  const begin=await request("login-options",{alias:user.alias,targetCredentialId:key.credential_id},"POST","");
+  if(begin.status!==200){note("선택한 패스키 인증 질문: HTTP "+begin.status+" / "+begin.json.error);return}
+  let signed;
+  try{signed=await SimpleWebAuthnBrowser.startAuthentication({optionsJSON:begin.json.options})}
+  catch(error){note("선택한 패스키 인증 취소/실패: "+error.name);return}
+  if(signed.id!==key.credential_id){
+    note("선택한 패스키와 실제 서명한 Credential ID가 다릅니다. 검증 실패 (서버에 로그인 요청 미전송).");
+    return;
+  }
+  const assertion={flowId:begin.json.flowId,response:signed};
+  const verified=await request("login-verify",assertion,"POST","");
+  if(verified.status!==200){
+    note("선택한 패스키 '"+key.name+"' 서명 검증: HTTP "+verified.status+" / 실패 ("+verified.json.error+")");
+    return;
+  }
+  setToken(verified.json.token);priorAssertion=assertion;
+  await refresh();
+  note("선택한 패스키: "+key.name+
+       "\nCredential ID 일치: PASS"+
+       "\n서버 공개키 서명 검증: HTTP "+verified.status+" / PASS"+
+       "\n인증 뒤 본인 비공개 자료: 다시 조회 성공");
+  say("선택한 '"+key.name+"' 패스키로 공개키 서명 인증에 성공했습니다. 다른 패스키를 삭제하기 전에 이 결과를 남겨두세요.");
 }
 async function register(add=false,cancel=false){
  const name=(add?$("nextname"):$("keyname")).value.trim();

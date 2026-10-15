@@ -92,10 +92,17 @@ async function handle(req: Request): Promise<Response> {
   if (req.method === "GET") {
     const session = await currentSession(req);
     if (!session) return error(401, "authentication_required");
-    if (op === "me") return respond(200, {
-      ok: true, account: { id: session.account.id, alias: session.account.alias },
-      sessionType: "opaque_bearer_token", sessionLifetimeMinutes: 30,
-    });
+    if (op === "me") {
+      const { data: usedKey, error: usedKeyError } = await db.from("t08_passkeys")
+        .select("credential_id,name").eq("account_id",session.account.id)
+        .eq("credential_id",session.credentialId).maybeSingle();
+      if (usedKeyError || !usedKey) return error(401,"session_credential_removed");
+      return respond(200, {
+        ok: true, account: { id: session.account.id, alias: session.account.alias },
+        authenticatedPasskey: { name:usedKey.name, credentialIdPrefix:usedKey.credential_id.slice(0,8) },
+        sessionType: "opaque_bearer_token", sessionLifetimeMinutes: 30,
+      });
+    }
     if (op === "passkeys") {
       const { data, error: e } = await db.from("t08_passkeys")
         .select("credential_id,name,storage_place,created_at,device_type,backed_up")
@@ -224,9 +231,16 @@ async function handle(req: Request): Promise<Response> {
     const { data: keys, error: e } = await db.from("t08_passkeys")
       .select("credential_id,transports").eq("account_id",user.id);
     if (e || !keys?.length) return error(403, "no_active_passkey");
+    // An exact credential may be selected during an authenticated diagnostic.
+    // The server still verifies every assertion cryptographically before issuing a session.
+    const requestedCredential = body.targetCredentialId;
+    if (requestedCredential !== undefined && (typeof requestedCredential !== "string" || !keys.some(k=>k.credential_id===requestedCredential))) {
+      return error(403,"credential_not_registered");
+    }
+    const permittedKeys = requestedCredential ? keys.filter(k=>k.credential_id===requestedCredential) : keys;
     const options = await generateAuthenticationOptions({
       rpID: RP_ID, userVerification: "required", timeout: 60_000,
-      allowCredentials: keys.map(k => ({ id:k.credential_id, transports: k.transports || [] })),
+      allowCredentials: permittedKeys.map(k => ({ id:k.credential_id, transports: k.transports || [] })),
     });
     const flowId=crypto.randomUUID();
     const { error: storeErr } = await db.from("t08_challenges").insert({
