@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>박준영 | About Me</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#111827; --muted:#536179; --blue:#2867d8;
+  --line:#dbe4f0; --soft:#eef5ff; --bg:#f7fbff;
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,#fff 0%,#f7fbff 58%,#fff 100%);
+}
+.wrap{width:min(1500px,92vw);margin:auto}
+header{
+  height:68px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid #e7edf5;
+}
+.brand{font-weight:900;letter-spacing:-.03em}
+.brand span{margin-left:20px;color:#8392aa;font-size:13px;letter-spacing:.28em}
+nav a{color:#334155;text-decoration:none;font-weight:700;margin-left:34px;font-size:14px}
+nav a.active{color:var(--blue);padding-bottom:22px;border-bottom:2px solid var(--blue)}
+
+.hero{
+  min-height:310px;
+  display:grid;grid-template-columns:1.12fr .88fr;align-items:center;gap:48px;
+  padding:42px 0 30px;
+  position:relative;
+}
+.hero::after{
+  content:"";position:absolute;right:-4vw;top:0;width:49%;height:100%;z-index:-1;
+  background:linear-gradient(145deg,rgba(232,243,255,.35),rgba(203,225,249,.45));
+  border-radius:0 0 0 80px;
+}
+.eyebrow{color:#5f6b7a;font-size:13px;font-weight:800;letter-spacing:.35em;margin-bottom:18px}
+h1{
+  margin:0;
+  font-size:clamp(48px,4.3vw,70px);
+  line-height:1.17;
+  letter-spacing:-.055em;
+}
+h1 .line{display:block}
+.hero-note{
+  justify-self:end;
+  margin-right:10%;
+  color:#2d67c7;
+  font-size:20px;
+  line-height:1.7;
+  transform:rotate(-3deg);
+  font-weight:700;
+}
+.hero-note::after{content:"";display:block;width:180px;border-top:2px solid #4b7ed0;margin-top:10px}
+
+.section-head{margin:0 0 14px}
+.section-head h2{font-size:25px;margin:0 0 4px;letter-spacing:-.03em}
+.section-head p{margin:0;color:var(--muted);font-size:14px}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-bottom:30px}
+.card{
+  background:rgba(255,255,255,.96);
+  border:1px solid #e4ebf4;
+  border-radius:20px;
+  box-shadow:0 10px 28px rgba(31,64,112,.08);
+  padding:20px 22px 18px;
+}
+.card-top{display:flex;align-items:center;gap:13px;margin-bottom:10px}
+.num{
+  min-width:54px;height:48px;border-radius:16px;background:#eaf3ff;
+  color:#1761d1;font-weight:900;font-size:20px;
+  display:flex;align-items:center;justify-content:center;
+}
+.card h3{margin:0;font-size:20px;letter-spacing:-.035em}
+.summary{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 10px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.tag{
+  background:#edf4ff;color:#2558ad;border-radius:999px;
+  padding:5px 10px;font-size:12px;font-weight:800;
+}
+.details{border-top:1px solid var(--line)}
+.row{
+  display:grid;grid-template-columns:58px 1fr;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--line);
+}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.label{font-size:13px;font-weight:900;color:#263a59}
+.row p{margin:0;color:#44536a;font-size:12.5px;line-height:1.45}
+footer{text-align:center;color:#8b9ab0;font-size:11px;letter-spacing:.22em;padding:2px 0 18px}
+
+@media (max-width:999px){
+  nav{display:none}
+  .hero{grid-template-columns:1fr;min-height:auto;padding:36px 0 24px}
+  .hero-note{display:none}
+  .hero::after{display:none}
+  h1{font-size:clamp(42px,10vw,62px)}
+  .cards{grid-template-columns:1fr}
+}
+@media (min-width:1000px) and (max-height:820px){
+  header{height:54px}
+  nav a.active{padding-bottom:15px}
+  .hero{min-height:235px;padding:25px 0 20px}
+  .eyebrow{margin-bottom:10px}
+  h1{font-size:52px;line-height:1.12}
+  .hero-note{font-size:17px}
+  .section-head{margin-bottom:8px}
+  .section-head h2{font-size:21px}
+  .card{padding:15px 17px 13px}
+  .card-top{margin-bottom:7px}
+  .num{height:40px;min-width:48px;font-size:17px}
+  .card h3{font-size:17px}
+  .summary{font-size:12px;margin-bottom:7px}
+  .tags{margin-bottom:8px}
+  .tag{font-size:11px;padding:4px 8px}
+  .row{padding:7px 0;grid-template-columns:50px 1fr;gap:9px}
+  .label{font-size:12px}
+  .row p{font-size:11.5px;line-height:1.35}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<style>
+/* 세 카드의 태그/상황/행동/결과 시작선을 동일하게 정렬 */
+@media (min-width:1000px){
+  .card{
+    display:grid;
+    grid-template-rows:auto 3.1em 36px 1fr;
+  }
+  .card-top{align-self:start}
+  .summary{
+    min-height:3.1em;
+    margin-bottom:0;
+  }
+  .tags{
+    min-height:36px;
+    align-content:start;
+    margin-bottom:0;
+  }
+  .details{
+    align-self:start;
+  }
+  .row{
+    min-height:64px;
+    align-items:start;
+  }
+}
+</style>
+
+
+<style>
+/* 히어로 영역 최종 정리: 오른쪽 별도 구역 없이 하나의 배경 */
+.hero{
+  grid-template-columns:1.25fr .75fr !important;
+  background:transparent !important;
+}
+.hero::after,
+.hero::before{
+  display:none !important;
+}
+.hero-note{
+  justify-self:end !important;
+  margin-right:4% !important;
+  color:#45658f !important;
+  font-size:18px !important;
+  line-height:1.65 !important;
+  transform:none !important;
+  letter-spacing:-.02em !important;
+}
+.hero-note::after{
+  width:150px !important;
+  border-top:1px solid #9fb3cc !important;
+  margin-top:9px !important;
+}
+
+/* 카드 문장이 글자 단위로 어색하게 끊기지 않도록 조정 */
+.card,
+.summary,
+.row p{
+  word-break:keep-all !important;
+  overflow-wrap:break-word !important;
+}
+.summary{
+  letter-spacing:-.025em !important;
+}
+.row p{
+  letter-spacing:-.02em !important;
+}
+
+/* 데스크톱에서 필요한 문장은 자연스럽게 다음 줄로 */
+@media (min-width:1000px){
+  .card{
+    padding-left:18px !important;
+    padding-right:18px !important;
+  }
+  .cards{
+    gap:14px !important;
+  }
+}
+</style>
+
+<style>
+.hero-keywords{
+  margin-top:12px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:#5f6b7a;
+  white-space:nowrap;
+}
+</style>
+
+<style>
+.scope{
+  margin-top:10px;
+  padding:16px 0 22px;
+  border-top:1px solid #e4ebf4;
+  color:#5f6b7a;
+}
+.scope h2{
+  margin:0 0 7px;
+  font-size:13px;
+  color:#536179;
+}
+.scope p{
+  margin:3px 0;
+  font-size:12px;
+  line-height:1.5;
+}
+</style>
+
+
+<style>
+header nav a{
+  position:relative;
+}
+header nav a.active{
+  color:#2867d8;
+}
+</style>
+
+
+<style>
+header nav a.active{
+  color:#2867d8;
+}
+</style>
+
+<style>
+/* T08 addition: preserves the published T01 Home/About markup and styling. */
+.t08-zone{margin:28px auto 50px;padding:26px;border:2px solid #8db4ed;border-radius:18px;background:#f4f8ff;box-shadow:0 9px 27px #183c8020}
+.t08-zone h2{font-size:25px;margin:0 0 10px}.t08-zone h3{margin:0 0 12px}.t08-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+.t08-pane{padding:18px;border:1px solid #d6e2f2;background:white;border-radius:12px}.t08-pane p{line-height:1.6}
+.t08-zone label{display:block;font-weight:700;font-size:13px;color:#3b516d;margin:10px 0}
+.t08-zone input,.t08-zone select{display:block;width:100%;padding:11px;font:inherit;border:1px solid #acbdd6;border-radius:8px;margin:5px 0}
+.t08-zone button{font:inherit;font-weight:700;border-radius:8px;padding:10px 12px;margin:4px;background:#245fc2;border:1px solid #245fc2;color:#fff;cursor:pointer}
+.t08-zone button.secondary{background:#fff;color:#245fc2}.t08-zone button:disabled{opacity:.55;cursor:wait}
+.t08-meta{font-size:13px;color:#526780;line-height:1.6}
+.t08-output{background:#e8f1ff;border-radius:8px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font:14px/1.6 system-ui,sans-serif}
+.t08-notes article,.t08-keylist article{margin:9px 0;padding:12px;border-radius:9px;border:1px solid #d3e3f8;background:#f9fcff}
+.t08-zone [hidden]{display:none!important}
+.t08-verify{background:#fff;border:1px solid #d7e1ef;border-radius:11px;padding:15px;margin-top:15px}
+@media(max-width:640px){.t08-zone{padding:15px}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="brand">박준영 <span>PORTFOLIO</span></div>
+  <nav aria-label="주요 메뉴">
+    <a class="active" href="#home">Home</a>
+    <a href="#about">About</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero" id="home">
+    <div>
+      <div class="eyebrow">MY STORY</div>
+      <h1><span class="line">경험과 배움을 통해 성장하고,</span><span class="line">맡은 일은 끝까지 해냅니다.</span></h1>
+    </div>
+    <div class="hero-note" aria-hidden="true">어제보다 오늘이<br>더 나은 사람을 꿈꿉니다.
+      <div class="hero-keywords">Experience · Growth · Responsibility</div></div>
+  </section>
+
+  <section id="about">
+    <div class="section-head">
+      <h2>나를 보여주는 세 가지</h2>
+      <p>말보다 경험과 행동으로 저를 소개합니다.</p>
+    </div>
+
+    <div class="cards" id="experience">
+      <article class="card">
+        <div class="card-top"><div class="num">01</div><h3>실무로 쌓은 보안 역량</h3></div>
+        <p class="summary">보안 평가부터 교육, 정보체계 관리까지 조직의 보안을 유지하기 위한<br>다양한 실무를 경험했습니다.</p>
+        <div class="tags"><span class="tag">보안 평가</span><span class="tag">보안 교육</span><span class="tag">정보체계 관리</span></div>
+        <div class="details">
+          <div class="row"><div class="label">상황</div><p>보안 수준을 유지하고 평가에 대비하기 위해 체계적인 보안 관리가 필요했습니다.</p></div>
+          <div class="row"><div class="label">행동</div><p>평가 항목을 점검하고 보안 교육과 정보체계 관리를 수행했습니다.</p></div>
+          <div class="row"><div class="label">결과</div><p>평가 지적사항을 조치하고 후속 관리로 미흡한 부분을 개선했습니다.</p></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="num">02</div><h3>배움으로 이어가는 성장</h3></div>
+        <p class="summary">IT·보안 분야에 필요한 지식과 기술을 꾸준히 학습하며 역량을 넓혀가고 있습니다.</p>
+        <div class="tags"><span class="tag">정보처리기사</span><span class="tag">SQLD</span><span class="tag">SKT-ALEPH 교육</span></div>
+        <div class="details">
+          <div class="row"><div class="label">상황</div><p>IT·보안 분야의 전문성과 실무 역량을 갖추기 위한 학습이 필요했습니다.</p></div>
+          <div class="row"><div class="label">행동</div><p>정보처리기사와 SQLD를 준비해 취득했으며, SKT-ALEPH 교육에서 서버·네트워크 등 IT 인프라 실습을 수행하고 있습니다.</p></div>
+          <div class="row"><div class="label">결과</div><p>정보처리기사와 SQLD를 취득하고 실습 중심의 교육으로 역량을 확장하고 있습니다.</p></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="num">03</div><h3>끝까지 책임지는 실행력</h3></div>
+        <p class="summary">맡은 역할에 책임감을 가지고 필요한 방법을 찾아 끝까지 실행합니다.</p>
+        <div class="tags"><span class="tag">협업</span><span class="tag">문제 해결</span><span class="tag">사전 대비</span></div>
+        <div class="details">
+          <div class="row"><div class="label">상황</div><p>짧은 준비 기간과 부족한 장비·자원 속에서 행사를 준비해야 했습니다.</p></div>
+          <div class="row"><div class="label">행동</div><p>필요한 장비와 통신 환경을 파악하고 관련 부대·기관과 협조해 부족한 부분을 확보하고 사전 점검했습니다.</p></div>
+          <div class="row"><div class="label">결과</div><p>필요한 환경을 확보해 행사 당일 맡은 업무를 차질 없이 수행했습니다.</p></div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<section class="scope wrap" aria-labelledby="scope-title">
+  <h2 id="scope-title">공개 범위</h2>
+  <p><strong>공개:</strong> 보안 실무 경험 · 학습 및 자격 · 업무 수행 경험</p>
+  <p><strong>비공개:</strong> 개인 연락처 · 주소/생년월일 등 개인정보 · 공개하기 어려운 보안 정보</p>
+</section>
+
+
+<section class="wrap t08-zone" aria-labelledby="t08-title" id="t08">
+  <h2 id="t08-title">패스키로 잠긴 나만의 공간</h2>
+  <p><b>위 소개는 모두 공개</b>되며 그대로 유지됩니다. 이곳의 비공개 본문은 패스키 인증 후에만 서버에서 전송됩니다.</p>
+  <div class="t08-grid">
+    <div class="t08-pane" id="t08-guest">
+      <h3>패스키 등록 · 로그인</h3>
+      <p class="t08-meta">비밀번호를 사용하지 않습니다. 실제 이름·이메일·연락처·신분증 번호 대신 가상의 테스트 별칭을 입력하세요.</p>
+      <label>테스트 계정 별칭 (영문·숫자·_-)
+        <input id="t08-alias" value="demo-a" maxlength="24" autocomplete="off" spellcheck="false"></label>
+      <label>첫 번째 패스키 이름
+        <input id="t08-keyname" value="첫 번째 패스키" maxlength="60"></label>
+      <label>패스키를 저장할 위치
+        <select id="t08-location"><option value="device">기기 자체 / Windows Hello</option><option value="google">Google 비밀번호 관리자</option><option value="security-key">별도 보안 키</option><option value="other">기타 패스키 관리자</option></select></label>
+      <button type="button" id="t08-register">새 계정 / 패스키 등록</button>
+      <button type="button" id="t08-login">패스키 로그인</button>
+      <button type="button" class="secondary" id="t08-cancel">등록 중간 취소 확인</button>
+    </div>
+    <div class="t08-pane">
+      <h3>공개·비공개 경계</h3>
+      <p><b>공개 영역:</b> 기존 T01의 Home·About 소개, 경험·배움·책임감</p>
+      <p><b>비공개 영역:</b> 가상 프로젝트 메모 · 가상 지원 계획 · 가상 회고 (본문은 서버 보관)</p>
+      <p class="t08-meta">비공개 자료는 실제 개인정보가 아닌 가상으로 작성한 학습용 내용입니다.</p>
+      <button type="button" class="secondary" id="t08-anon">비로그인 직접 요청 검사</button>
+    </div>
+  </div>
+  <p class="t08-output" id="t08-status" aria-live="polite" role="status">패스키 상태 확인 중입니다.</p>
+  <div class="t08-pane" id="t08-private" hidden>
+    <h3>인증 후에만 보이는 비공개 자료</h3>
+    <p id="t08-user" class="t08-meta"></p>
+    <div id="t08-notes" class="t08-notes"></div>
+    <h3>등록된 패스키</h3>
+    <div id="t08-keys" class="t08-keylist"></div>
+    <p class="t08-meta">패스키를 하나도 남기지 않으면 복구할 수 없으므로 마지막 패스키 삭제는 서버에서 거절합니다. 삭제된 패스키는 로그인 자격을 잃습니다.</p>
+    <label>추가 패스키 이름
+      <input id="t08-nextname" value="두 번째 패스키" maxlength="60"></label>
+    <label>추가 패스키 저장 위치
+      <select id="t08-nextlocation"><option value="device">기기 자체 / Windows Hello</option><option value="google">Google 비밀번호 관리자</option><option value="security-key">별도 보안 키</option><option value="other">기타 패스키 관리자</option></select></label>
+    <button type="button" id="t08-add">두 번째 패스키 추가</button>
+    <button type="button" class="secondary" id="t08-refresh">다시 조회</button>
+    <button type="button" class="secondary" id="t08-logout">로그아웃</button>
+  </div>
+  <details class="t08-verify">
+    <summary><b>T08 통과 기준 검증 도구 · 테스트 계정 전용</b></summary>
+    <p class="t08-meta">검사 결과에 비밀번호·개인키·세션 토큰을 표시하지 않습니다. 페이지 새로고침 뒤에도 보관되는 인증 자료는 현재 브라우저 탭의 sessionStorage에만 저장됩니다.</p>
+    <button class="secondary" id="t08-test-register">등록 질문 2개 비교</button>
+    <button class="secondary" id="t08-test-login">로그인 질문 2개 비교</button>
+    <button class="secondary" id="t08-test-replay">이미 사용한 질문 재사용</button>
+    <button class="secondary" id="t08-test-signature">위조 서명 거절</button>
+    <label>상대 테스트 계정 UUID
+      <input id="t08-other" autocomplete="off" placeholder="상대 계정 UUID (제출 증빙에 노출하지 마세요)"></label>
+    <button class="secondary" id="t08-test-cross">계정 접근통제 검사</button>
+    <pre class="t08-output" id="t08-log">검증 대기</pre>
+  </details>
+</section>
+<script>
+(() => {
+  const homeLink = document.querySelector('header nav a[href="#home"]');
+  const aboutLink = document.querySelector('header nav a[href="#about"]');
+  if (!homeLink || !aboutLink) return;
+
+  function setActive(target) {
+    const aboutActive = target === 'about';
+    homeLink.classList.toggle('active', !aboutActive);
+    aboutLink.classList.toggle('active', aboutActive);
+  }
+
+  function updateNav() {
+    setActive(window.scrollY > 20 ? 'about' : 'home');
+  }
+
+  homeLink.addEventListener('click', () => setActive('home'));
+  aboutLink.addEventListener('click', () => setActive('about'));
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  updateNav();
+})();
+</script>
+
+<script src="https://unpkg.com/@simplewebauthn/browser@14.0.0/dist/bundle/index.umd.min.js"></script>
+<script>
+(()=>{
+"use strict";
+const apiBase="https://jrjkoierayrsknlhoqlb.supabase.co/functions/v1/t08-passkey";
+const $=id=>document.getElementById("t08-"+id);
+let token=sessionStorage.getItem("t08_passkey_token")||"", user=null, priorAssertion=null;
+const say=s=>$("status").textContent=s, note=s=>$("log").textContent=s;
+const controls=()=>Array.from(document.querySelectorAll("#t08 button"));
+function setToken(t){token=t||"";if(t)sessionStorage.setItem("t08_passkey_token",t);else sessionStorage.removeItem("t08_passkey_token")}
+async function request(op,body=null,method="POST",bearer=token,query={}){
+ const url=new URL(apiBase);url.searchParams.set("op",op);
+ Object.entries(query).forEach(([k,v])=>url.searchParams.set(k,String(v)));
+ const r=await fetch(url.href,{
+   method,cache:"no-store",
+   headers:{"Content-Type":"application/json",...(bearer?{"Authorization":"Bearer "+bearer}:{})},
+   ...(method==="POST"?{body:JSON.stringify(body||{})}:{})
+ });
+ return {status:r.status,json:await r.json().catch(()=>({error:"unreadable_response"}))};
+}
+async function busy(action){controls().forEach(x=>x.disabled=true);try{await action()}catch(e){say("요청 실패: "+(e?.message||"unknown error"))}finally{controls().forEach(x=>x.disabled=false)}}
+function guest(msg){setToken("");user=null;$("private").hidden=true;$("guest").hidden=false;$("notes").replaceChildren();$("keys").replaceChildren();say(msg)}
+async function refresh(){
+ const r=await request("me",null,"GET");
+ if(r.status!==200){guest("패스키 로그인이 필요합니다. 서버에서 비공개 본문을 내려주지 않았습니다.");return}
+ user=r.json.account;
+ const [data,credentials]=await Promise.all([request("private",null,"GET"),request("passkeys",null,"GET")]);
+ if(data.status!==200||credentials.status!==200){say("서버 조회 오류: HTTP "+data.status+" / "+credentials.status);return}
+ $("guest").hidden=true;$("private").hidden=false;
+ $("user").textContent="테스트 계정: "+user.alias+" · 계정 UUID: "+user.id+" · 임의 세션 토큰 30분 · 비밀번호 없음";
+ const docs=$("notes");docs.replaceChildren();
+ for(const item of data.json.notes||[]){
+   const a=document.createElement("article"),h=document.createElement("h4"),p=document.createElement("p");
+   h.textContent=item.title;p.textContent=item.body;a.append(h,p);docs.append(a);
+ }
+ const list=$("keys");list.replaceChildren();
+ for(const key of credentials.json.passkeys||[]){
+   const a=document.createElement("article"),h=document.createElement("strong"),p=document.createElement("p"),del=document.createElement("button");
+   h.textContent=key.name;p.className="t08-meta";
+   p.textContent="등록 날짜: "+new Date(key.created_at).toLocaleString("ko-KR")+" · 보관 위치: "+key.storage_place+" · Credential ID: "+key.credential_id.slice(0,8)+"…";
+   del.type="button";del.textContent="이 패스키 삭제";del.className="secondary";
+   del.addEventListener("click",()=>busy(async()=>{
+      if(!confirm("이 패스키의 서버 등록을 삭제합니다. 마지막 1개라면 서버가 거절합니다. 진행하시겠습니까?"))return;
+      const response=await request("delete-passkey",{credentialId:key.credential_id});
+      if(response.status!==200){say("삭제 거절 HTTP "+response.status+" / "+response.json.error);return}
+      await refresh();say("패스키 삭제 HTTP 200. 남은 패스키로 재로그인해 검증하십시오.");
+   }));
+   a.append(h,p,del);list.append(a);
+ }
+ say("서버 인증 성공: 이 계정의 비공개 메모 "+(data.json.notes||[]).length+"건과 패스키 "+(credentials.json.passkeys||[]).length+"개 조회.");
+}
+async function register(add=false,cancel=false){
+ const name=(add?$("nextname"):$("keyname")).value.trim();
+ const alias=add?user?.alias:$("alias").value.trim();
+ const storagePlace=(add?$("nextlocation"):$("location")).value;
+ if(!alias||!name){say("테스트 계정 별칭과 패스키 이름을 입력하세요.");return}
+ const begin=await request("register-options",{alias,passkeyName:name,storagePlace});
+ if(begin.status!==200){say("등록 질문 요청 HTTP "+begin.status+" / "+begin.json.error);return}
+ const {flowId,options}=begin.json;
+ if(cancel){
+   const done=await request("register-cancel",{flowId});
+   say("등록 중간 취소 HTTP "+done.status+". 개인키·공개키·계정 저장 전 단계에서 중단됨.");
+   return;
+ }
+ let response;
+ try{
+   if(!window.SimpleWebAuthnBrowser)throw Error("WebAuthn 브라우저 라이브러리를 불러오지 못했습니다");
+   response=await SimpleWebAuthnBrowser.startRegistration({optionsJSON:options});
+ }catch(e){
+   await request("register-cancel",{flowId});
+   say("기기 패스키 등록 취소 또는 오류: "+e.name+" / 서버에 패스키를 저장하지 않았습니다");
+   return;
+ }
+ const finished=await request("register-verify",{flowId,response});
+ if(finished.status!==201){say("패스키 등록 검증 실패 HTTP "+finished.status+" / "+finished.json.error);return}
+ setToken(finished.json.token);priorAssertion=null;
+ await refresh();say("패스키 등록 성공 HTTP 201. 서버에는 개인키가 아닌 공개키만 저장했습니다.");
+}
+async function login(){
+ if(!window.SimpleWebAuthnBrowser){say("브라우저 패스키 라이브러리를 불러올 수 없습니다.");return}
+ const begin=await request("login-options",{alias:$("alias").value.trim()},"POST","");
+ if(begin.status!==200){say("로그인 질문 생성 실패 HTTP "+begin.status+" / "+begin.json.error);return}
+ let signed;
+ try{signed=await SimpleWebAuthnBrowser.startAuthentication({optionsJSON:begin.json.options})}
+ catch(e){say("패스키 서명 취소 또는 실패: "+e.name);return}
+ const assertion={flowId:begin.json.flowId,response:signed};
+ const verified=await request("login-verify",assertion,"POST","");
+ if(verified.status!==200){say("로그인 서명 거절 HTTP "+verified.status+" / "+verified.json.error);return}
+ setToken(verified.json.token);priorAssertion=assertion;await refresh();
+ const replay=await request("login-verify",assertion,"POST","");
+ note("실제 패스키 서명 로그인: HTTP "+verified.status+" (기대 200)\n같은 질문·응답 재사용: HTTP "+replay.status+" (기대 409)");
+ say("기기 서명과 서버 공개키 검증 성공. 인증된 계정의 비공개 메모만 표시됩니다.");
+}
+$("register").onclick=()=>busy(()=>register());
+$("cancel").onclick=()=>busy(()=>register(false,true));
+$("login").onclick=()=>busy(login);
+$("add").onclick=()=>busy(()=>register(true));
+$("refresh").onclick=()=>busy(refresh);
+$("logout").onclick=()=>busy(async()=>{
+ const old=token,off=await request("logout",{}),again=await request("private",null,"GET",old);
+ note("로그아웃: HTTP "+off.status+" (기대 200)\n기존 세션으로 비공개 재조회: HTTP "+again.status+" (기대 401)");
+ guest("로그아웃했습니다. 같은 토큰은 HTTP "+again.status+"으로 거절되었습니다.");
+});
+$("anon").onclick=()=>busy(async()=>{
+ const r=await request("private",null,"GET","");
+ note("로그인 없는 GET /private: HTTP "+r.status+" (기대 401)\n응답에 비공개 본문 없음: "+(r.json.notes===undefined));
+ say("비로그인 직접 요청: HTTP "+r.status);
+});
+async function shortDigest(s){
+ const bytes=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)));
+ return Array.from(bytes.slice(0,6),x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function compare(which){
+ const alias=user?.alias||$("alias").value.trim();
+ const op=which==="register"?"register-options":"login-options";
+ const data=which==="register"?{alias,passkeyName:"질문비교용",storagePlace:"device"}:{alias};
+ const a=await request(op,data,"POST",which==="register"?token:"");
+ const b=await request(op,data,"POST",which==="register"?token:"");
+ if(a.status!==200||b.status!==200){note("질문 생성 실패 HTTP "+a.status+" / "+b.status);return}
+ const [h1,h2]=await Promise.all([shortDigest(a.json.options.challenge),shortDigest(b.json.options.challenge)]);
+ if(which==="register"){
+  await request("register-cancel",{flowId:a.json.flowId});await request("register-cancel",{flowId:b.json.flowId});
+ }
+ note((which==="register"?"등록":"로그인")+" 질문 A SHA256 앞 12자리: "+h1+"\n질문 B SHA256 앞 12자리: "+h2+"\n두 질문이 서로 다른가: "+(a.json.options.challenge!==b.json.options.challenge?"PASS":"FAIL"));
+}
+$("test-register").onclick=()=>busy(()=>compare("register"));
+$("test-login").onclick=()=>busy(()=>compare("login"));
+$("test-replay").onclick=()=>busy(async()=>{
+ if(!priorAssertion){note("패스키로 로그인한 직후 실행하십시오.");return}
+ const r=await request("login-verify",priorAssertion,"POST","");
+ note("기존 로그인 질문·서명을 재사용한 요청: HTTP "+r.status+" (기대 409)");
+});
+$("test-signature").onclick=()=>busy(async()=>{
+ if(!window.SimpleWebAuthnBrowser){note("WebAuthn 라이브러리가 없습니다.");return}
+ const alias=user?.alias||$("alias").value.trim();
+ const begin=await request("login-options",{alias},"POST","");
+ if(begin.status!==200){note("서명 검사용 질문 생성 실패 HTTP "+begin.status);return}
+ let signed;
+ try{signed=await SimpleWebAuthnBrowser.startAuthentication({optionsJSON:begin.json.options})}
+ catch(e){note("기기 서명 취소: "+e.name);return}
+ const corrupted=structuredClone(signed);
+ const sig=corrupted.response.signature;
+ corrupted.response.signature=(sig[0]==="A"?"B":"A")+sig.slice(1);
+ const r=await request("login-verify",{flowId:begin.json.flowId,response:corrupted},"POST","");
+ note("실제 서명의 한 글자를 위조한 요청: HTTP "+r.status+" (기대 403)");
+});
+$("test-cross").onclick=()=>busy(async()=>{
+ const foreign=$("other").value.trim();
+ if(!user){note("먼저 패스키로 로그인하십시오.");return}
+ if(!/^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i.test(foreign)||foreign===user.id){note("상대 테스트 계정 UUID를 입력하십시오.");return}
+ const before=await request("private",null,"GET");
+ const denied=await request("private-for",null,"GET",token,{account_id:foreign});
+ const spoofed=await request("private",null,"GET",token,{account_id:foreign});
+ const after=await request("private",null,"GET");
+ note("내 자료 직접 조회: HTTP "+before.status+" / "+before.json.notes?.length+"건"+
+ "\n상대 자료 주소로 직접 접근: HTTP "+denied.status+" (기대 403)"+
+ "\n상대 UUID를 URL에 위조해 본인 조회: HTTP "+spoofed.status+" (기대 200)"+
+ "\n돌아온 자료가 실제 본인 계정 소유인지: "+(spoofed.json.accountId===user.id?"PASS":"FAIL")+
+ "\n거절 전후 내 자료 건수: "+before.json.notes?.length+" → "+after.json.notes?.length);
+});
+if(!window.PublicKeyCredential)say("이 기기/브라우저는 WebAuthn을 지원하지 않습니다.");
+else if(token)refresh().catch(()=>guest("세션 만료 또는 연결 오류. 다시 패스키 로그인하십시오."));
+else say("비공개 메모는 서버 인증 전에는 HTML에도 응답에도 없습니다. 패스키 등록·로그인을 시작할 수 있습니다.");
+})();
+</script>
+</body>
+</html>
