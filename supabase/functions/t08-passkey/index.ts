@@ -151,6 +151,7 @@ async function handle(req: Request): Promise<Response> {
       userName: alias,
       userDisplayName: alias,
       attestationType: "none",
+      preferredAuthenticatorType: ["remoteDevice","securityKey","localDevice"].includes(body.preferredAuthenticatorType)?body.preferredAuthenticatorType:undefined,
       excludeCredentials: existing.map(c => ({ id: c.credential_id, transports: c.transports || [] })),
       authenticatorSelection: { residentKey: "required", userVerification: "required" },
       supportedAlgorithmIDs: [-7, -257],

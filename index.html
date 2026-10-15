@@ -370,8 +370,16 @@ header nav a.active{
     <p class="t08-meta">패스키를 하나도 남기지 않으면 복구할 수 없으므로 마지막 패스키 삭제는 서버에서 거절합니다. 삭제된 패스키는 로그인 자격을 잃습니다.</p>
     <label>추가 패스키 이름
       <input id="t08-nextname" value="두 번째 패스키" maxlength="60"></label>
-    <label>추가 패스키 저장 위치
+    <label>추가 패스키 저장 위치 (선택 기록용 · 실제 저장 장치 강제 아님)
       <select id="t08-nextlocation"><option value="device">기기 자체 / Windows Hello</option><option value="google">Google 비밀번호 관리자</option><option value="security-key">별도 보안 키</option><option value="other">기타 패스키 관리자</option></select></label>
+    <label>패스키를 생성할 장치 추천
+      <select id="t08-preferred">
+        <option value="remoteDevice" selected>다른 기기(휴대전화·태블릿) 우선 / QR 코드</option>
+        <option value="securityKey">USB·NFC 보안 키 우선</option>
+        <option value="localDevice">현재 기기 우선 (기존 관리자 중복 주의)</option>
+        <option value="">브라우저에서 직접 선택</option>
+      </select></label>
+    <p class="t08-meta">저장 위치 선택은 기록용입니다. 최초 패스키가 이미 백업·동기화된 경우 다른 기기에서 같은 패스키 관리자 계정을 사용하면 새 패스키로 등록되지 않을 수 있습니다. 서로 다른 독립 인증 수단을 선택해 주세요.</p>
     <button type="button" id="t08-add">두 번째 패스키 추가</button>
     <button type="button" class="secondary" id="t08-refresh">다시 조회</button>
     <button type="button" class="secondary" id="t08-logout">로그아웃</button>
@@ -452,7 +460,7 @@ async function refresh(){
  for(const key of credentials.json.passkeys||[]){
    const a=document.createElement("article"),h=document.createElement("strong"),p=document.createElement("p"),del=document.createElement("button");
    h.textContent=key.name;p.className="t08-meta";
-   p.textContent="등록 날짜: "+new Date(key.created_at).toLocaleString("ko-KR")+" · 보관 위치: "+key.storage_place+" · Credential ID: "+key.credential_id.slice(0,8)+"…";
+   p.textContent="등록 날짜: "+new Date(key.created_at).toLocaleString("ko-KR")+" · 선택한 보관 위치: "+key.storage_place+" · 유형: "+key.device_type+" · 백업: "+(key.backed_up?"예":"아니오")+" · Credential ID: "+key.credential_id.slice(0,8)+"…";
    del.type="button";del.textContent="이 패스키 삭제";del.className="secondary";
    del.addEventListener("click",()=>busy(async()=>{
       if(!confirm("이 패스키의 서버 등록을 삭제합니다. 마지막 1개라면 서버가 거절합니다. 진행하시겠습니까?"))return;
@@ -469,7 +477,8 @@ async function register(add=false,cancel=false){
  const alias=add?user?.alias:$("alias").value.trim();
  const storagePlace=(add?$("nextlocation"):$("location")).value;
  if(!alias||!name){say("테스트 계정 별칭과 패스키 이름을 입력하세요.");return}
- const begin=await request("register-options",{alias,passkeyName:name,storagePlace});
+ const preferredAuthenticatorType=add?$("preferred").value:"";
+ const begin=await request("register-options",{alias,passkeyName:name,storagePlace,preferredAuthenticatorType});
  if(begin.status!==200){say("등록 질문 요청 HTTP "+begin.status+" / "+begin.json.error);return}
  const {flowId,options}=begin.json;
  if(cancel){
@@ -483,7 +492,9 @@ async function register(add=false,cancel=false){
    response=await SimpleWebAuthnBrowser.startRegistration({optionsJSON:options});
  }catch(e){
    await request("register-cancel",{flowId});
-   say("기기 패스키 등록 취소 또는 오류: "+e.name+" / 서버에 패스키를 저장하지 않았습니다");
+   say(e.name==="InvalidStateError"?
+   "InvalidStateError: 이미 등록된 패스키를 같은 인증 관리자에서 중복 생성하려 한 경우입니다. 위의 '다른 기기' 추천을 이용하고 기존 패스키가 동기화되지 않은 별도의 인증 수단을 선택하세요. 새 패스키는 서버에 저장되지 않았습니다.":
+   "기기 패스키 등록 취소 또는 오류: "+e.name+" / 서버에 패스키를 저장하지 않았습니다");
    return;
  }
  const finished=await request("register-verify",{flowId,response});
