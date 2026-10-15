@@ -466,7 +466,12 @@ async function refresh(){
       if(!confirm("이 패스키의 서버 등록을 삭제합니다. 마지막 1개라면 서버가 거절합니다. 진행하시겠습니까?"))return;
       const response=await request("delete-passkey",{credentialId:key.credential_id});
       if(response.status!==200){say("삭제 거절 HTTP "+response.status+" / "+response.json.error);return}
-      await refresh();say("패스키 삭제 HTTP 200. 남은 패스키로 재로그인해 검증하십시오.");
+      const rejected=await request("login-options",{alias:user.alias,targetCredentialId:key.credential_id},"POST","");
+      note("삭제한 패스키: "+key.name+"\n서버 삭제: HTTP "+response.status+" / 기대 200"+
+           "\n삭제 Credential ID로 로그인 질문 요청: HTTP "+rejected.status+
+           " / 기대 403\n검사 결과: "+(rejected.status===403?"PASS":"FAIL"));
+      await refresh();
+      say("패스키 삭제 HTTP 200. 삭제한 ID의 로그인 질문은 HTTP "+rejected.status+"로 거절됐습니다. 남은 패스키로 재로그인해 주세요.");
    }));
    const test=document.createElement("button");test.type="button";test.className="secondary";
    test.textContent="이 패스키 인증 시험";
