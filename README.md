@@ -40,7 +40,7 @@ WebAuthn 표준을 사용하며 인증 검증은 Supabase Edge Function(Deno)에
 
 ## 4. 어떻게 인증하고 시험했는가
 
-**등록** — 브라우저가 `register-options`를 요청하면 서버가 고유 질문을 생성·저장합니다(5분 유효). 인증 기기는 개인키를 자체 보관하면서 WebAuthn 등록 응답을 만듭니다. 브라우저가 `register-verify`에 `flowId`와 `response`를 제출하면 서버가 origin, RP ID, 사용자 확인, 등록 응답을 검증하고 **공개키만** DB에 저장합니다. 정상 응답은 HTTP 201입니다. **브라우저 Network에서 실제 `register-verify` 요청·응답을 캡처한 증빙(C23)은 아직 확보하지 않았습니다.** 따라서 실제 패킷 본문 검사 완료로 표시하지 않습니다.
+**등록** — 브라우저가 `register-options`를 요청하면 서버가 고유 질문을 생성·저장합니다(5분 유효). 인증 기기는 개인키를 자체 보관하면서 WebAuthn 등록 응답을 만듭니다. 브라우저가 `register-verify`에 `flowId`와 `response`를 제출하면 서버가 origin, RP ID, 사용자 확인, 등록 응답을 검증하고 **공개키만** DB에 저장합니다. 정상 응답은 HTTP 201입니다. **2026-10-16 신규 검증 계정 `demo-c23`의 실제 Chrome Network에서 `register-verify` HTTP 201과 요청 Payload 필드 `flowId`, `response`를 확인했습니다.** 내부 WebAuthn 응답에서 `attestationObject`, `authenticatorData`, `clientDataJSON`, `publicKey`, `publicKeyAlgorithm`, `transports`, `type`을 확인했고, 개인키 전송용 필드는 확인되지 않았습니다. 이는 개인키가 인증기 내부에 보관되는 WebAuthn 구조 및 서버 공개키 저장 코드와 부합합니다. **원시 바이너리 내용 전체를 독립적으로 해독·감사한 것은 아니며 제출용 이미지의 Credential ID 등 마스킹은 별도 진행해야 합니다.**
 
 **로그인** — 서버가 로그인 질문을 발급하고 기기가 서명합니다. 서버는 `verifyAuthenticationResponse`로 저장된 공개키·서명·질문·origin·RP ID를 검증합니다. 성공해야만 32바이트 난수 토큰을 발급하며, 토큰은 현재 브라우저 탭의 `sessionStorage`에, 해시는 DB에 저장하고 유효기간은 30분으로 설정했습니다. `logout`은 서버의 세션을 폐기합니다.
 
@@ -59,7 +59,7 @@ WebAuthn 표준을 사용하며 인증 검증은 Supabase Edge Function(Deno)에
 | 첫 키 삭제 뒤 `demo-a` 두 번째 키 재로그인 | 정상 로그인·본인 메모 3건 | 사용자 화면 + DB |
 | `demo-b`에서 `demo-a` 자료 직접 요구 | HTTP 403, 건수 3→3 | 사용자 화면 + DB |
 | `demo-a`에서 `demo-b` 자료 직접 요구 | HTTP 403, URL UUID 위조 시 본인 자료만 반환, 자료 3→3 | 기존 PC에서 인증 후 사용자 화면 + DB |
-| 등록 HTTP 요청·응답 원문 | **증빙 미확보** | 새 패스키 등록 가능한 기기 필요 |
+| 등록 HTTP 요청 구조와 결과 | `demo-c23` `register-verify` HTTP **201**, `flowId`/`response` 및 WebAuthn 내부 필드 확인 | 사용자 제공 Network 화면·브라우저 Payload 항목 확인 (제출용 마스킹 남음) |
 
 
 **2026-10-16 양방향 검증 재확인:** `demo-a`를 기존 기기의 두 번째 패스키로 인증한 후 `demo-b` 비공개 자료를 직접 요구했을 때 HTTP 403이 반환되었습니다. 상대 UUID를 본인 조회 URL에 입력한 요청도 서버가 본인 `demo-a` 자료만 반환했고, 전후 자료는 3→3건으로 유지됐습니다. 검증 후 Supabase 조회에서 두 계정 모두 패스키 1개, 메모 3건이 남아 있음을 확인했습니다. **계정 UUID와 개인 식별 정보는 최종 증빙에서 가립니다.**
@@ -107,7 +107,7 @@ WebAuthn 표준을 사용하며 인증 검증은 Supabase Edge Function(Deno)에
 ### 제출 확정 전 남은 조건
 
 - [x] 기존 PC의 `demo-a`로 `demo-b` 역방향 접근 거절 HTTP 403, 본인 자료 반환 및 거절 전후 3→3 확인 (C38·C39).
-- [ ] 등록 시 `register-verify` 요청·응답 HTTP 201에서 `flowId`·WebAuthn `response` 확인, 개인키 전송·저장 없음 증빙 (C23).
+- [x] 신규 `demo-c23` 등록 `register-verify` HTTP 201, Payload `flowId`·WebAuthn `response` 및 내부 공개키 관련 필드 확인(C23 기능 검증). [ ] 제출용 화면의 Credential ID·세션 토큰 등 마스킹.
 - [x] C26 원문 '저장 장소를 제출문에 기재' 충족 판단: 갤럭시 Google 비밀번호 관리자 확인 사실 기록. `demo-a` 현재 서명에 사용된 키와 표시된 Google 항목 간 Credential ID 일치는 미확인인 별도 한계로 구분.
 - [ ] 최종 첨부 증빙의 이메일/UUID/토큰 등 비밀·개인정보 마스킹 점검 (C34).
 - [ ] 과제 원문과 설명서 6항목·확인 4줄·AI 판단 3줄·'남길 것'·'제출할 것' 정확한 내용 대조. 현재 원문 전문을 이 대화에서 확인할 수 없어 **조건 번호 및 문구 일부는 잠정 체크리스트**입니다.
