@@ -137,6 +137,12 @@
 - [ ] 원문 '남길 것'에 명시된 필수 증빙 **만** 첨부
 
 
+## DB 접근권한 재점검 — 2026-10-16
+
+- [x] Supabase 쿼리로 `t08_accounts`, `t08_passkeys`, `t08_challenges`, `t08_sessions`, `t08_private_notes`의 RLS가 모두 활성화되어 있음을 확인.
+- [x] 동일 5개 테이블 각각 `has_table_privilege('anon', ..., 'SELECT')=false` 및 `has_table_privilege('authenticated', ..., 'SELECT')=false` 확인. **Supabase 일반 클라이언트 역할이 이 테이블을 직접 조회할 수 없다는 DB 권한 상태**를 확인한 것임. 모든 API 경로의 보안 검증을 대신하지는 않음.
+- [x] `demo-b` 패스키가 여전히 1개이며 `storage_place=device`, `device_type=multiDevice`, `backed_up=true` 기록 유지됨을 확인. 실제 패스키 관리자는 브라우저/운영체제에서 별도 확인해야 함(C26).
+
 ## 2026-10-16 문서 마무리 기록
 
 - [x] `README.md`에 인증 설명서 6개 섹션과 실제 HTTP 검증 결과 및 미차단 한계 반영 — 소스 문서 커밋 `76076c7e814e6c3af4a445b316bb19a945be0273`.
